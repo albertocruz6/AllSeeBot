@@ -4,17 +4,23 @@ from twitterFunctions.twitter_api import *
 from datetime import datetime
 from tools.timer_tool import Timer
 
+
+
+
 # Discord client
 class MyClient(discord.Client):
 	async def on_ready(self):
 		print('We have logged in as {0.user}'.format(self))
+		self.lst_commands = ["greet", "search"]
 
 	async def on_message(self,message):
 		if message.author == self.user:
 			return
 		msg = message.content
 		if msg.startswith("$greet"):
-			await message.channel.send("Hello {0.author}!".format(message))
+			await message.channel.send("Hello @{0.author}!".format(message))
+		if msg.startswith("$commands"):
+			await message.channel.send("{0}!".format(self.lst_commands))
 
 now = datetime.now()  
 client = MyClient()
