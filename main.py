@@ -1,5 +1,6 @@
 import discord
 import os
+from keep_alive import keep_alive
 
 
 client = discord.Client()
@@ -18,9 +19,9 @@ async def on_message(message):
 		await message.channel.send("Hello!")
 
 def main():
+	# keep_alive()
 	client.run(os.getenv('BOT_TOKEN'))
 	print("Hello there! -> Bot is ONLINE")
-	pass
 
 if __name__ == "__main__":
 	main()
