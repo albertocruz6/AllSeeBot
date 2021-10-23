@@ -61,7 +61,7 @@ class MyClient(discord.Client):
 				# fetching the url
 				url = user.url
 				await channel.send(url)
-			except tweepy.error.TweepError::
+			except tweepy.error.TweepError:
 				await channel.send("{0} not found!".format(user))
 			if users: # if users remain in this queue return current channel
 				self.user_search_stack.append(users)
