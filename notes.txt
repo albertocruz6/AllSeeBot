@@ -1,0 +1,1 @@
+I'm doing a "second bot" but it's actually the first bot I made with python funvtionality. I find it more intuitive than JS so I think I'll stick to it

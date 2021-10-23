@@ -18,7 +18,7 @@ async def on_message(message):
 		await message.channel.send("Hello!")
 
 def main():
-	client.run(os.getnev('TOKEN'))
+	client.run(os.getenv('BOT_TOKEN'))
 	print("Hello there! -> Bot is ONLINE")
 	pass
 
