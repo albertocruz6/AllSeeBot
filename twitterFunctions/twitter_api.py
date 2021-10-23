@@ -10,7 +10,7 @@ def get_api_handler():
 	    auth.set_access_token(os.getenv("TW_C_KEY"), os.getenv("TW_C_SECRET"))
 	    # interface between program and twitter
 	    return tweepy.API(auth)
-	 except:
+	except:
 	 	return None # If environmental variables fail
 
 
