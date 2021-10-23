@@ -22,6 +22,7 @@ class MyClient(discord.Client):
 			self.update_fetch.start()
 
 		self.lst_commands = ["greet", "commands", "search"]
+		self.user_search_stack = []
 	
 
 	async def on_message(self,message):
@@ -34,8 +35,18 @@ class MyClient(discord.Client):
 				await message.channel.send("Hello @{0.author}!".format(message))
 			elif msg.startswith("${0}".format(self.lst_commands[1])):
 				await message.channel.send("{0}!".format(self.lst_commands))
+			elif msg.startswith("${0}".format(self.lst_commands[2])):
+				if len(msg_arr) < 2:
+					await message.channel.send("Please insert twitter username(s) to be queued!")
+				else:
+					for i in range(1,len(msg_arr)):
+						self.user_search_stack.append(msg_arr[i])
+					await message.channel.send("{0}!".format(self.lst_commands))
 	
 	# Loop to fetch tweets of users lists
 	@tasks.loop(seconds=60.0)
 	async def update_fetch(self):
+		if self.user_search_stack:
+			user = self.user_search_stack.pop()
+			print("Searching for {0} in twitter".format(user))
 		print("Testing async task!")
