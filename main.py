@@ -1,66 +1,15 @@
-import discord
-from   discord.ext import tasks
 import os
-from twitterFunctions.twitter_api import *
-from datetime import datetime
-from tools.timer_tool import Timer
 
-
-
-
-# Discord client
-class MyClient(discord.Client):
-	async def on_ready(self):
-		print('We have logged in as {0.user}'.format(self))
-		self.lst_commands = ["greet", "search"]
-		update_fetch()
-
-	async def on_message(self,message):
-		if message.author == self.user:
-			return
-		msg = message.content
-		if msg.startswith("$greet"):
-			await message.channel.send("Hello @{0.author}!".format(message))
-		if msg.startswith("$commands"):
-			await message.channel.send("{0}!".format(self.lst_commands))
-	
-	@tasks.loop(seconds=30.0)
-	async def update_fetch():
-		print("Testing async task!")
-
-now = datetime.now()  
-client = MyClient()
-tw_handler = get_api_handler()
-if tw_handler is None:
-	print("Invalid tw bot account found!")
-else:
-	 tw_handler.update_status("AllSeeBot ONLINE! - " + now.strftime("%d/%m/%Y %H:%M:%S"));
-	 print("Logged into AllSeeBot TW account at time " + now.strftime("%d/%m/%Y %H:%M:%S") )
-
-
-'''
-# Client events all exist on the Discord API 
-@client.event
-async def on_ready():
-	print('We have logged in as {0.user}'.format(client))
-
-@client.event
-async def on_message(message):
-	if message.author == client.user:
-		return
-	msg = message.content
-	if msg.startswith("$greet"):
-		await message.channel.send("Hello {0.author}!".format(message))
-'''
-
-
-
-
+from utils.discord.discord_client import MyClient
 
 
 def main():
-	client.run(os.getenv('BOT_TOKEN'))
-	print("Hello there! -> Bot is ONLINE")
+	try:
+		client = MyClient()
+		print("Hello there! -> Bot is initializing....")
+		client.run(os.getenv('BOT_TOKEN'))
+	finally:
+		print("\nBot will be turned off...\n")
 
 if __name__ == "__main__":
 	main()
