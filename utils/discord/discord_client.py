@@ -45,7 +45,7 @@ class MyClient(discord.Client):
 					users = []
 					for i in range(1,len(msg_arr)):
 						users.append(msg_arr[i])
-					self.user_search_stack(users)
+					self.user_search_stack.append(users)
 					await message.channel.send("Queued user searches {0}".format(self.user_search_stack))
 	
 	# Loop to fetch tweets of users lists
