@@ -1,4 +1,5 @@
 import discord
+from   discord.ext import tasks
 import os
 from twitterFunctions.twitter_api import *
 from datetime import datetime
@@ -12,6 +13,7 @@ class MyClient(discord.Client):
 	async def on_ready(self):
 		print('We have logged in as {0.user}'.format(self))
 		self.lst_commands = ["greet", "search"]
+		update_fetch()
 
 	async def on_message(self,message):
 		if message.author == self.user:
@@ -21,6 +23,10 @@ class MyClient(discord.Client):
 			await message.channel.send("Hello @{0.author}!".format(message))
 		if msg.startswith("$commands"):
 			await message.channel.send("{0}!".format(self.lst_commands))
+	
+	@tasks.loop(seconds=30.0)
+	async def update_fetch():
+		print("Testing async task!")
 
 now = datetime.now()  
 client = MyClient()
