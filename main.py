@@ -1,9 +1,13 @@
 import discord
 import os
+from twitterFunctions.twitter_api import *
 
 
 # Discord client  
 client = discord.Client()
+tw_handler = get_api_handler()
+if tw_handler is None:
+	print("Invalid tw bot account found!")
 
 # Client events all exist on the Discord API 
 @client.event
