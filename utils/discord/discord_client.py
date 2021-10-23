@@ -23,6 +23,8 @@ class MyClient(discord.Client):
 
 		self.lst_commands = ["greet", "commands", "search"]
 		self.user_search_stack = []
+		self.user_search_stack_channels = []
+
 	
 
 	async def on_message(self,message):
@@ -39,14 +41,30 @@ class MyClient(discord.Client):
 				if len(msg_arr) < 2:
 					await message.channel.send("Please insert twitter username(s) to be queued!")
 				else:
+					self.user_search_stack_channels.append(message.channel)
+					users = []
 					for i in range(1,len(msg_arr)):
-						self.user_search_stack.append(msg_arr[i])
-					await message.channel.send("{0}!".format(self.lst_commands))
+						users.append(msg_arr[i])
+					self.user_search_stack(users)
+					await message.channel.send("Queued user searches {0}".format(self.user_search_stack))
 	
 	# Loop to fetch tweets of users lists
 	@tasks.loop(seconds=60.0)
 	async def update_fetch(self):
 		if self.user_search_stack:
-			user = self.user_search_stack.pop()
-			print("Searching for {0} in twitter".format(user))
+			channel = self.user_search_stack_channels.pop()
+			users = self.user_search_stack.pop()
+			user = users.pop()
+			print("Searching for {0} in twitter...".format(user))
+			try:
+				user = self.tw_handler.get_user(user)
+				# fetching the url
+				url = user.url
+				await channel.send(url)
+			except tweepy.error.TweepError::
+				await channel.send("{0} not found!".format(user))
+			if users: # if users remain in this queue return current channel
+				self.user_search_stack.append(users)
+				self.user_search_stack_channels.append(channel)
+			
 		print("Testing async task!")
