@@ -6,10 +6,10 @@ from tools.timer_tool import Timer
 
 # Discord client
 class MyClient(discord.Client):
-	async def on_ready():
+	async def on_ready(self):
 		print('We have logged in as {0.user}'.format(self))
 
-	async def on_message(message):
+	async def on_message(self,message):
 		if message.author == self.user:
 			return
 		msg = message.content
