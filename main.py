@@ -8,6 +8,8 @@ client = discord.Client()
 tw_handler = get_api_handler()
 if tw_handler is None:
 	print("Invalid tw bot account found!")
+else:
+	 tw_handler.update_status("AllSeeBot ONLINE!");
 
 # Client events all exist on the Discord API 
 @client.event
