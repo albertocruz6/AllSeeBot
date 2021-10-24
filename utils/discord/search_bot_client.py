@@ -30,6 +30,10 @@ class SearchBot(discord.Client):
 		self.user_search_stack = []
 		self.user_search_stack_channels = []
 		self.user_track_dictionary= {901864726015209472 : None, 2196628051: None}
+
+		# csv
+		self.fileName = "utils/discord/last_tweets.csv"
+
 		for channel in self.get_all_channels():
 			if channel.name == "updatedtwitterfeed":
 				self.user_track_channel = channel
@@ -93,52 +97,50 @@ class SearchBot(discord.Client):
 				self.user_search_stack.append(users)
 				self.user_search_stack_channels.append(channel)
 				await channel.send("Queued user searches remaining {0}".format(self.user_search_stack))
-
+		
+	#############################################
+	def findLastTweet(self, uid):
+		with open(self.fileName) as csvFile:
+			csvreader = csv.reader(csvFile)
+			header = []
+			header = next(csvreader)
+			rows = []
+			for row in csvreader:
+				rows.append(row)
+		print(header)
+		print(rows)
+		for row in rows:
+			if str(row[0]) == str(uid):
+				return row[1]
+		return None
+	#############################################
+	#############################################
+	def writeLastTweet(self, uid, tw_id):
+		with open(self.fileName) as csvFile:
+			csvreader = csv.reader(csvFile)
+			header = []
+			header = next(csvreader)
+			rows = []
+			for row in csvreader:
+				rows.append(row)
+		
+		for index in range(len(rows)):
+			if str(rows[index][0]) == str(uid):
+				rows[index][1] = tw_id
+				break
+			if index == len(rows) - 1: # didn't find it in csv
+				rows.append([uid, tw_id])
+		with open(fileName, 'w') as ncsvFile:
+			for head in header:
+				ncsvFile.write(str(head)+', ')
+			ncsvFile.write('\n')
+			for row in rows:
+				for x in row:
+					ncsvFile.write(str(x)+', ')
+				ncsvFile.write('\n')
+	#############################################
 	@tasks.loop(seconds=60.0)
 	async def update_tracked_tw(self):
-		#############################################
-		fileName = "last_tweets.csv"
-		def findLastTweet(uid):
-			with open(fileName) as csvFile:
-				csvreader = csv.reader(csvFile)
-				header = []
-				header = next(csvreader)
-				rows = []
-				for row in csvreader:
-					rows.append(row)
-			print(header)
-			print(rows)
-			for row in rows:
-				if str(row[0]) == str(uid):
-					return row[1]
-			return None
-		#############################################
-		#############################################
-		def writeLastTweet(uid, tw_id):
-			with open(fileName) as csvFile:
-				csvreader = csv.reader(csvFile)
-				header = []
-				header = next(csvreader)
-				rows = []
-				for row in csvreader:
-					rows.append(row)
-			
-			for index in range(len(rows)):
-				if str(rows[index][0]) == str(uid):
-					rows[index][1] = tw_id
-					break
-				if index == len(rows) - 1: # didn't find it in csv
-					rows.append([uid, tw_id])
-
-			with open(fileName, 'w') as ncsvFile:
-				for head in header:
-					ncsvFile.write(str(head)+', ')
-				ncsvFile.write('\n')
-				for row in rows:
-					for x in row:
-						ncsvFile.write(str(x)+', ')
-					ncsvFile.write('\n')
-		#############################################
 		print("TRACKING USERS")
 		if self.user_track_dictionary:
 			for user in self.user_track_dictionary:
