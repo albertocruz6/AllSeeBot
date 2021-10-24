@@ -84,7 +84,7 @@ class MyClient(discord.Client):
 				self.user_search_stack_channels.append(channel)
 				await channel.send("Queued user searches remaining {0}".format(self.user_search_stack))
 
-	@tasks.loop(seconds=80.0)
+	@tasks.loop(seconds=60.0)
 	async def update_track_fetch(self):
 		#############################################
 		fileName = "last_tweets.csv"
@@ -133,6 +133,7 @@ class MyClient(discord.Client):
 		if self.user_track_dictionary:
 			for user in self.user_track_dictionary:
 				lastWrittenTweet = findLastTweet(user)
+				print(lastWrittenTweet)
 				if self.user_track_dictionary[user] is None and lastWrittenTweet == "None":
 					try:
 						user_r = self.tw_handler.get_user(user_id=user)
