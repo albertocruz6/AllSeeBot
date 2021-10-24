@@ -34,10 +34,12 @@ class SearchBot(discord.Client):
 		# csv
 		self.fileName = "utils/discord/last_tweets.csv"
 
+		self.user_track_channel = None
 		for channel in self.get_all_channels():
 			if channel.name == "updatedtwitterfeed":
 				self.user_track_channel = channel
 				break
+
 
 		if self.tw_handler is None:
 			self.logger.warning("Invalid tw bot account found! Fetching will not initiate")
@@ -86,12 +88,12 @@ class SearchBot(discord.Client):
 	@tasks.loop(seconds=30.0)
 	async def search_tw_loop(self):
 		if self.user_search_stack:
-			channel = self.user_search_stack_channels.pop()
-			users = self.user_search_stack.pop()
+			channel = self.user_search_stack_channels.pop(0)
+			users = self.user_search_stack.pop(0)
 			for i in range(3):
 				if not users:
 					break
-				user = users.pop()
+				user = users.pop(0)
 				self.logger.info("Searching for {0} in twitter...".format(user))
 				try:
 					self.logger.info("User found!")
@@ -143,6 +145,8 @@ class SearchBot(discord.Client):
 				break
 			if index == len(rows) - 1: # didn't find it in csv
 				rows.append([uid, tw_id])
+		print(header)
+		print(rows)		
 		with open(self.fileName, 'w') as ncsvFile:
 			for head in header:
 				ncsvFile.write(str(head)+', ')
@@ -152,7 +156,7 @@ class SearchBot(discord.Client):
 					ncsvFile.write(str(x)+', ')
 				ncsvFile.write('\n')
 	#############################################
-	@tasks.loop(seconds=60.0)
+	@tasks.loop(minutes=1.5)
 	async def update_tracked_tw(self):
 		print("TRACKING USERS")
 		if self.user_track_dictionary:
