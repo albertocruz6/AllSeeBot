@@ -37,14 +37,41 @@ class AllSeeBot(discord.Client):
 		self.fileName = "utils/discord/last_tweets.csv"
 
 		# channel to track twitter feed
+		self.user_track_target_channel = "updatedtwitterfeed"
 		self.user_track_channel = None
 		for channel in self.get_all_channels():
-			if channel.name == "updatedtwitterfeed":
+			if channel.name == self.user_track_target_channel:
 				self.user_track_channel = channel
 				break
 		# create channel [updatedtwitterfeed] if not found
+		print(self.user_track_channel)
 		if self.user_track_channel is None:
-			pass
+			# logic goes here
+			servers = self.guilds
+			for server in servers:
+				# Find default text category
+				check_category = False
+				tcategory = None
+				server_categories = server.categories
+				for category in server_categories:
+					if category.name == 'Text Channels':
+						check_category = True
+						tcategory = category
+						break
+					else:
+						tcategory = category
+
+				server_channels = server.channels
+				check_channel =  False
+				for channel in server_channels:
+					if channel.name == self.user_track_target_channel:
+						check_channel = True
+						break
+				if not check_channel and check_category:
+					tchannel = await server.create_text_channel(self.user_track_target_channel, category=tcategory)
+					self.user_track_channel = tchannel
+				
+
 
 		# log status
 		if self.tw_handler is None:
@@ -221,7 +248,7 @@ class AllSeeBot(discord.Client):
 					file_name = f1.name
 				msg.add_attachment(file_data, maintype='text', subtype='plain', filename=file_name)
 			with open(self.fileName, 'rb') as csvfile:
-				msg.add_attachment(csvfile.read(), maintype='application', subtype="octet-stream", filename=csvfile.name)
+				msg.add_attachment(csvfile.read(), maintype='application', subtype="octet-stream", filename='last_tweets.csv')
 
 			# send
 			with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:

@@ -21,7 +21,8 @@ def main():
 		logger.warning('Started BOTS')
 		client.run(os.getenv('BOT_TOKEN'))
 	finally:
-		settings.tw_api.update_status("AllSeeBot Offline! :') - {0}".format(datetime.now().strftime("%d/%m/%Y %H:%M:%S")))
+		if settings.tw_api is not None:
+			settings.tw_api.update_status("AllSeeBot Offline! :') - {0}".format(datetime.now().strftime("%d/%m/%Y %H:%M:%S")))
 		logger.warning('Bot will be turned off...')
 
 if __name__ == "__main__":
