@@ -158,10 +158,10 @@ class SearchBot(discord.Client):
 	#############################################
 	@tasks.loop(minutes=1.5)
 	async def update_tracked_tw(self):
-		print("TRACKING USERS")
+		self.logger.info("Tracking users tweets...")
 		if self.user_track_dictionary:
 			for user in self.user_track_dictionary:
-				# lastWrittenTweet = findLastTweet(user)
+				lastWrittenTweet = self.findLastTweet(user)
 				if self.user_track_dictionary[user] is None:
 					try:
 						user_r = self.tw_handler.get_user(user_id=user)
@@ -172,7 +172,8 @@ class SearchBot(discord.Client):
 							await self.user_track_channel.send("https://twitter.com/twitter/statuses/{0}".format(self.user_track_dictionary[user]))
 					except Exception as e: 
 						print(e)
-						print("Couldn find user {0}!".format(user))
+						self.logger.error(e)
+						self.logger.error("Couldn find user {0}!".format(user))
 				else:
 					try:
 						user_r = self.tw_handler.get_user(user_id=user)
@@ -183,7 +184,8 @@ class SearchBot(discord.Client):
 							if self.user_track_channel:
 								await self.user_track_channel.send("https://twitter.com/twitter/statuses/{0}".format(self.user_track_dictionary[user]))
 						else:
-							print('User {0} already updated in tl...'.format(user_r.screen_name))
+							self.logger.info('User {0} already updated in tl...'.format(user_r.screen_name))
 					except Exception as e: 
 						print(e)
-						print("Couldn find user {0}!".format(user))
+						self.logger.error(e)
+						self.logger.error("Couldn find user {0}!".format(user))
