@@ -209,8 +209,8 @@ class SearchBot(discord.Client):
 			# Attachments
 			for log_file in logs:
 				with open(log_file, 'r') as f1:
-					file_data = f.read()
-					file_name = f.name
+					file_data = f1.read()
+					file_name = f1.name
 				msg.add_attachment(file_data, maintype='text', subtype='plain', filename=file_name)
 			with open(self.fileName, 'r') as csvfile:
 				msg.attach('lastTweets.csv', csvfile.getvalue(), 'text/csv')
