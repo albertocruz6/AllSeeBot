@@ -153,7 +153,8 @@ class SearchBot(discord.Client):
 						writeLastTweet(user, self.user_track_dictionary[user])
 						if self.user_track_channel:
 							await self.user_track_channel.send("https://twitter.com/twitter/statuses/{0}".format(self.user_track_dictionary[user]))
-					except:
+					except Exception as e: 
+						print(e)
 						print("Couldn find user {0}!".format(user))
 				else:
 					try:
