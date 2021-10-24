@@ -12,10 +12,9 @@ from datetime import datetime
 from utils.external_tools.timer_tool import Timer
 
 # Discord Client class
-class SearchBot(discord.Client):
+class AllSeeBot(discord.Client):
 	async def on_ready(self):
 		now = datetime.now()  
-
 		# Logger setup
 		self.logger = logging.getLogger(__name__)
 		self.logger.setLevel(logging.INFO)
@@ -48,8 +47,8 @@ class SearchBot(discord.Client):
 		if self.tw_handler is None:
 			self.logger.warning("Invalid tw bot account found! Fetching will not initiate")
 		else:
-			self.tw_handler.update_status("SearchBot ONLINE! - " + now.strftime("%d/%m/%Y %H:%M:%S"));
-			print("Logged into SearchBot TW account at time " + now.strftime("%d/%m/%Y %H:%M:%S"))
+			self.tw_handler.update_status("AllSeeBot ONLINE! - " + now.strftime("%d/%m/%Y %H:%M:%S"));
+			self.logger.info("Logged into AllSeeBot TW account at time " + now.strftime("%d/%m/%Y %H:%M:%S"))
 			self.search_tw_loop.start()
 			self.update_tracked_tw.start()
 

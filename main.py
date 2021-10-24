@@ -1,8 +1,9 @@
 import os
 import logging
+from datetime import datetime
 
 import settings
-from utils.discord.search_bot_client import SearchBot
+from utils.discord.search_bot_client import AllSeeBot
 
 
 def main():
@@ -16,10 +17,11 @@ def main():
 	# Booting sequence
 	try:
 		settings.init_setup()
-		client = SearchBot()
+		client = AllSeeBot()
 		logger.warning('Started BOTS')
 		client.run(os.getenv('BOT_TOKEN'))
 	finally:
+		settings.tw_api.update_status("AllSeeBot Offline! :') - {0}".format(datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
 		logger.warning('Bot will be turned off...')
 
 if __name__ == "__main__":
