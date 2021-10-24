@@ -22,7 +22,7 @@ class MyClient(discord.Client):
 			print("Logged into AllSeeBot TW account at time " + now.strftime("%d/%m/%Y %H:%M:%S"))
 			self.update_fetch.start()
 
-		self.lst_commands = ["greet", "commands", "search"]
+		self.lst_commands = ["greet", "commands", "searchTW"]
 		self.user_search_stack = []
 		self.user_search_stack_channels = []
 
@@ -39,7 +39,7 @@ class MyClient(discord.Client):
 			elif msg.startswith("${0}".format(self.lst_commands[1])):
 				await message.channel.send("{0}!".format(self.lst_commands))
 			elif msg.startswith("${0}".format(self.lst_commands[2])):
-				msg_arr = msg.split("~")
+				msg_arr = msg.split("\\\\")
 				if len(msg_arr) < 2:
 					await message.channel.send("Please insert twitter username(s) to be queued!")
 				else:
