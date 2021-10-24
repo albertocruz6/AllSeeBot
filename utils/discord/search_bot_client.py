@@ -42,6 +42,9 @@ class AllSeeBot(discord.Client):
 			if channel.name == "updatedtwitterfeed":
 				self.user_track_channel = channel
 				break
+		# create channel [updatedtwitterfeed] if not found
+		if self.user_track_channel is None:
+			pass
 
 		# log status
 		if self.tw_handler is None:
@@ -52,7 +55,8 @@ class AllSeeBot(discord.Client):
 			self.search_tw_loop.start()
 			self.update_tracked_tw.start()
 
-		self.send_log_reports.start() # every 6 hours send log report 
+		# commented to not send email while working on feature branch
+		# self.send_log_reports.start() # every 6 hours send log report 
 
 
 	async def on_message(self,message):
@@ -84,10 +88,13 @@ class AllSeeBot(discord.Client):
 					for i in range(1,len(msg_arr)):
 						try:
 							self.user_track_dictionary[int(msg_arr[i])] = None
-							print("Added user {0} to tracking tl".format(msg_arr[i]))
+							print("{0} added user {1} to tracking tl".format(message.author ,msg_arr[i]))
+							self.logger.info("{0} added user {1} to tracking tl".format(message.author ,msg_arr[i]))
 						except Exception as e:
 							print(e)
 							print("Didnt add user {0} to tracking tl".format(msg_arr[i]))
+							self.logger.error(e)
+							self.logger.error("Didnt add user {0} to tracking tl".format(msg_arr[i]))
 
 	
 	# Loop to fetch tweets of users lists
@@ -133,6 +140,7 @@ class AllSeeBot(discord.Client):
 						self.user_track_dictionary[user] = tweets[0].id
 						self.writeLastTweet(user, self.user_track_dictionary[user])
 						if self.user_track_channel:
+							await self.user_track_channel.send("Username -> {0}\nUserId -> {1} ".format(user_r.screen_name, user))								
 							await self.user_track_channel.send("https://twitter.com/twitter/statuses/{0}".format(self.user_track_dictionary[user]))
 					except Exception as e: 
 						print(e)
@@ -146,6 +154,7 @@ class AllSeeBot(discord.Client):
 							self.writeLastTweet(user, self.user_track_dictionary[user])
 							self.user_track_dictionary[user] = tweets[0].id
 							if self.user_track_channel:
+								await self.user_track_channel.send("Username -> {0}\nUserId -> {1} ".format(user_r.screen_name, user))								
 								await self.user_track_channel.send("https://twitter.com/twitter/statuses/{0}".format(self.user_track_dictionary[user]))
 						else:
 							self.logger.info('User {0} already updated in tl...'.format(user_r.screen_name))
@@ -221,4 +230,6 @@ class AllSeeBot(discord.Client):
 		except Exception as e:
 			print(e)
 			print("Error! Couldn't send log report...- {0}".format(datetime.now()))
+			self.logger.error(e)
+			self.logger.error("Error! Couldn't send log report...- {0}".format(datetime.now()))
 
