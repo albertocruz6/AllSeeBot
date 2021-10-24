@@ -62,8 +62,9 @@ class MyClient(discord.Client):
 				user_r = self.tw_handler.get_user(screen_name=user)
 				# fetching the url
 				print(user_r)
-				if user_r is not None:
-					await channel.send("User found! \n{0}".format(user_r))
+				if user_r.screen_name is not None:
+					url = "https://twitter.com/intent/user?user_id={0}".format(user_r.id)
+					await channel.send("User found! \n{0}".format(url))
 					# await channel.send("User found! \n{0}".format(url))
 				else:
 					await channel.send("User not found!")
