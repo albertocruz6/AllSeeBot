@@ -83,7 +83,7 @@ class AllSeeBot(discord.Client):
 			self.update_tracked_tw.start()
 
 		# commented to not send email while working on feature branch
-		# self.send_log_reports.start() # every 6 hours send log report 
+		self.send_log_reports.start() # every 6 hours send log report 
 
 
 	async def on_message(self,message):
