@@ -4,19 +4,26 @@ import tweepy
 import csv
 import logging
 
+import settings
 from datetime import datetime
-from settings import tw_api
 from utils.external_tools.timer_tool import Timer
 
 # Discord Client class
 class SearchBot(discord.Client):
 	async def on_ready(self):
 		now = datetime.now()  
-		print("Bot is initialized!")
-		print('We have logged in as {0.user}'.format(self))
+
+		# Logger setup
+		self.logger = logging.getLogger(__name__)
+		self.logger.setLevel(logging.INFO)
+		log_file_handler = logging.FileHandler('searchbot.log')
+		self.logger.addHandler(log_file_handler)
+
+		self.logger.info("Bot is initialized!")
+		self.logger.info('We have logged in as {0.user}'.format(self))
 		
 		# Twitter Authentication
-		self.tw_handler = tw_api
+		self.tw_handler = settings.tw_api
 		# Initial Variables
 		self.lst_commands = ["greet", "commands", "searchTW"]
 		self.user_search_stack = []
@@ -28,7 +35,7 @@ class SearchBot(discord.Client):
 				break
 
 		if self.tw_handler is None:
-			print("Invalid tw bot account found! Fetching will not initiate")
+			self.logger.warning("Invalid tw bot account found! Fetching will not initiate")
 		else:
 			self.tw_handler.update_status("SearchBot ONLINE! - " + now.strftime("%d/%m/%Y %H:%M:%S"));
 			print("Logged into SearchBot TW account at time " + now.strftime("%d/%m/%Y %H:%M:%S"))
