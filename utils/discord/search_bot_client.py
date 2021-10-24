@@ -208,7 +208,7 @@ class SearchBot(discord.Client):
 				body = "Test"
 
 				msg = 'Subject: {0}\n\n{1}'.format(subject, body)
-				smtp.sendemail(os.getenv('BOT_MAIL'), "alberto.cruz6@upr.edu", msg)
+				smtp.sendmail(os.getenv('BOT_MAIL'), "alberto.cruz6@upr.edu", msg)
 		except Exception as e:
 			print(e)
 			print("Error! Couldn't send log report...- {0}".format(datetime.now()))
