@@ -213,7 +213,7 @@ class SearchBot(discord.Client):
 					file_name = f1.name
 				msg.add_attachment(file_data, maintype='text', subtype='plain', filename=file_name)
 			with open(self.fileName, 'r') as csvfile:
-				msg.attach('lastTweets.csv', csvfile.read(), 'text/csv')
+				msg.add_attachment(csvfile.read(), maintype='application', subtype="octet-stream", filename=csvfile.name)
 
 			# send
 			with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
