@@ -130,7 +130,7 @@ class SearchBot(discord.Client):
 				break
 			if index == len(rows) - 1: # didn't find it in csv
 				rows.append([uid, tw_id])
-		with open(fileName, 'w') as ncsvFile:
+		with open(self.fileName, 'w') as ncsvFile:
 			for head in header:
 				ncsvFile.write(str(head)+', ')
 			ncsvFile.write('\n')
