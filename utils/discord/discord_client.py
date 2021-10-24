@@ -26,7 +26,7 @@ class MyClient(discord.Client):
 		self.lst_commands = ["greet", "commands", "searchTW"]
 		self.user_search_stack = []
 		self.user_search_stack_channels = []
-		self.user_track_dictionary= {901864726015209472 : None, 2196628051 : None}
+		self.user_track_dictionary= {"901864726015209472" : None, "2196628051": None}
 		for channel in self.get_all_channels():
 			if channel.name == "updatedtwitterfeed":
 				self.user_track_channel = channel
@@ -89,7 +89,7 @@ class MyClient(discord.Client):
 			for user in self.user_track_dictionary:
 				if self.user_track_dictionary[user] is None:
 					try:
-						user_r = self.tw_handler.get_user(id=user)
+						user_r = self.tw_handler.get_user(user)
 						tweets = self.tw_handler.user_timeline(screen_name=user_r.screen_name,count = 1)
 						# print(tweets[0].text)
 						self.user_track_dictionary[user] = tweets[0].id
