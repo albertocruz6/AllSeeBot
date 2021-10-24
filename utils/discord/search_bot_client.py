@@ -204,6 +204,18 @@ class SearchBot(discord.Client):
 			msg['From'] = os.getenv('BOT_MAIL')
 			msg['To'] = "alberto.cruz6@upr.edu"
 			msg.set_content('')
+			logs = ['searchbot.log', 'allSeeBot.log']
+			
+			# Attachments
+			for log_file in logs:
+				with open(log_file, 'r') as f1:
+					file_data = f.read()
+					file_name = f.name
+				msg.add_attachment(file_data, maintype='text', subtype='plain', filename=file_name)
+			with open(self.fileName 'r') as csvfile:
+				msg.attach('lastTweets.csv', csvfile.getvalue(), 'text/csv')
+
+			# send
 			with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
 				smtp.login(os.getenv('BOT_MAIL'), os.getenv('BOT_MAIL_PASS'))
 				smtp.send_message(msg)
