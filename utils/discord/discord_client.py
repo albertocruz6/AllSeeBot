@@ -82,8 +82,8 @@ class MyClient(discord.Client):
 	@tasks.loop(seconds=120.0)
 	async def update_track_fetch(self):
 		if self.user_track_dictionary:
-			for user, lastTweet in self.user_track_dictionary:
-				if lastTweet is None:
+			for user in self.user_track_dictionary:
+				if self.user_track_dictionary[user] is None:
 					try:
 						user_r = self.tw_handler.get_user(screen_name=user)
 						tweets = self.tw_handler.user_timeline(screen_name=user_r.screen_name,count = 1)
