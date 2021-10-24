@@ -150,7 +150,7 @@ class SearchBot(discord.Client):
 						user_r = self.tw_handler.get_user(user_id=user)
 						tweets = self.tw_handler.user_timeline(screen_name=user_r.screen_name,count = 1)
 						self.user_track_dictionary[user] = tweets[0].id
-						writeLastTweet(user, self.user_track_dictionary[user])
+						self.writeLastTweet(user, self.user_track_dictionary[user])
 						if self.user_track_channel:
 							await self.user_track_channel.send("https://twitter.com/twitter/statuses/{0}".format(self.user_track_dictionary[user]))
 					except Exception as e: 
@@ -161,7 +161,7 @@ class SearchBot(discord.Client):
 						user_r = self.tw_handler.get_user(user_id=user)
 						tweets = self.tw_handler.user_timeline(screen_name=user_r.screen_name,count = 1)
 						if self.user_track_dictionary[user] != tweets[0].id:
-							writeLastTweet(user, self.user_track_dictionary[user])
+							self.writeLastTweet(user, self.user_track_dictionary[user])
 							self.user_track_dictionary[user] = tweets[0].id
 							if self.user_track_channel:
 								await self.user_track_channel.send("https://twitter.com/twitter/statuses/{0}".format(self.user_track_dictionary[user]))
