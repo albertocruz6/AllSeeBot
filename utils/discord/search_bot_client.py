@@ -5,6 +5,7 @@ import csv
 import logging
 import smtplib
 import os
+from email.message import EmailMessage
 
 import settings
 from datetime import datetime
@@ -198,17 +199,14 @@ class SearchBot(discord.Client):
 	@tasks.loop(hours=6.0)
 	async def send_log_reports(self):
 		try:
-			with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
-				smtp.ehlo()
-				smtp.starttls()
-				smtp.ehlo()
+			msg = EmailMessage()
+			msg['Subject'] = "Log report for AllSeeBot bot - {0}".format(datetime.now())
+			msg['From'] = os.getenv('BOT_MAIL')
+			msg['To'] = "alberto.cruz6@upr.edu"
+			msg.set_content('')
+			with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
 				smtp.login(os.getenv('BOT_MAIL'), os.getenv('BOT_MAIL_PASS'))
-
-				subject = "Log report for AllSeeBot bot - {0}".format(datetime.now())
-				body = "Test"
-
-				msg = 'Subject: {0}\n\n{1}'.format(subject, body)
-				smtp.sendmail(os.getenv('BOT_MAIL'), "alberto.cruz6@upr.edu", msg)
+				smtp.send_message(msg)
 		except Exception as e:
 			print(e)
 			print("Error! Couldn't send log report...- {0}".format(datetime.now()))
