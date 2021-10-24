@@ -92,7 +92,7 @@ class MyClient(discord.Client):
 						user_r = self.tw_handler.get_user(screen_name=user)
 						tweets = self.tw_handler.user_timeline(screen_name=user_r.screen_name,count = 1)
 						# print(tweets[0].text)
-						self.user_track_dictionary[user] = tweet[0].id
+						self.user_track_dictionary[user] = tweets[0].id
 						# https://twitter.com/twitter/statuses/
 						if self.user_track_channel:
 							await self.user_track_channel.send("https://twitter.com/twitter/statuses/{0}".format(self.user_track_dictionary[user]))
