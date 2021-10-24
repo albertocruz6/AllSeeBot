@@ -58,10 +58,14 @@ class MyClient(discord.Client):
 			user = users.pop()
 			print("Searching for {0} in twitter...".format(user))
 			try:
-				user = self.tw_handler.get_user(screen_name=user)
+				user_r = self.tw_handler.get_user(screen_name=user)
 				# fetching the url
-				url = user.url
-				await channel.send("User found! \n{0}".format(url))
+				url = user_r.url
+				if url not None:
+					await channel.send("User found! \n{0}".format(user_r))
+					# await channel.send("User found! \n{0}".format(url))
+				else:
+					await channel.send("User not found!")
 			except:
 				await channel.send("{0} not found!".format(user))
 			if users: # if users remain in this queue return current channel
