@@ -37,11 +37,41 @@ class AllSeeBot(discord.Client):
 		self.fileName = "utils/discord/last_tweets.csv"
 
 		# channel to track twitter feed
+		self.user_track_target_channel = "updatedtwitterfeed"
 		self.user_track_channel = None
 		for channel in self.get_all_channels():
-			if channel.name == "updatedtwitterfeed":
+			if channel.name == self.user_track_target_channel:
 				self.user_track_channel = channel
 				break
+		# create channel [updatedtwitterfeed] if not found
+		print(self.user_track_channel)
+		if self.user_track_channel is None:
+			# logic goes here
+			servers = self.guilds
+			for server in servers:
+				# Find default text category
+				check_category = False
+				tcategory = None
+				server_categories = server.categories
+				for category in server_categories:
+					if category.name == 'Text Channels':
+						check_category = True
+						tcategory = category
+						break
+					else:
+						tcategory = category
+
+				server_channels = server.channels
+				check_channel =  False
+				for channel in server_channels:
+					if channel.name == self.user_track_target_channel:
+						check_channel = True
+						break
+				if not check_channel and check_category:
+					tchannel = await server.create_text_channel(self.user_track_target_channel, category=tcategory)
+					self.user_track_channel = tchannel
+				
+
 
 		# log status
 		if self.tw_handler is None:
@@ -52,7 +82,8 @@ class AllSeeBot(discord.Client):
 			self.search_tw_loop.start()
 			self.update_tracked_tw.start()
 
-		self.send_log_reports.start() # every 6 hours send log report 
+		# commented to not send email while working on feature branch
+		# self.send_log_reports.start() # every 6 hours send log report 
 
 
 	async def on_message(self,message):
@@ -84,10 +115,13 @@ class AllSeeBot(discord.Client):
 					for i in range(1,len(msg_arr)):
 						try:
 							self.user_track_dictionary[int(msg_arr[i])] = None
-							print("Added user {0} to tracking tl".format(msg_arr[i]))
+							print("{0} added user {1} to tracking tl".format(message.author ,msg_arr[i]))
+							self.logger.info("{0} added user {1} to tracking tl".format(message.author ,msg_arr[i]))
 						except Exception as e:
 							print(e)
 							print("Didnt add user {0} to tracking tl".format(msg_arr[i]))
+							self.logger.error(e)
+							self.logger.error("Didnt add user {0} to tracking tl".format(msg_arr[i]))
 
 	
 	# Loop to fetch tweets of users lists
@@ -133,6 +167,7 @@ class AllSeeBot(discord.Client):
 						self.user_track_dictionary[user] = tweets[0].id
 						self.writeLastTweet(user, self.user_track_dictionary[user])
 						if self.user_track_channel:
+							await self.user_track_channel.send("Username -> {0}\nUserId -> {1} ".format(user_r.screen_name, user))								
 							await self.user_track_channel.send("https://twitter.com/twitter/statuses/{0}".format(self.user_track_dictionary[user]))
 					except Exception as e: 
 						print(e)
@@ -146,6 +181,7 @@ class AllSeeBot(discord.Client):
 							self.writeLastTweet(user, self.user_track_dictionary[user])
 							self.user_track_dictionary[user] = tweets[0].id
 							if self.user_track_channel:
+								await self.user_track_channel.send("Username -> {0}\nUserId -> {1} ".format(user_r.screen_name, user))								
 								await self.user_track_channel.send("https://twitter.com/twitter/statuses/{0}".format(self.user_track_dictionary[user]))
 						else:
 							self.logger.info('User {0} already updated in tl...'.format(user_r.screen_name))
@@ -212,7 +248,7 @@ class AllSeeBot(discord.Client):
 					file_name = f1.name
 				msg.add_attachment(file_data, maintype='text', subtype='plain', filename=file_name)
 			with open(self.fileName, 'rb') as csvfile:
-				msg.add_attachment(csvfile.read(), maintype='application', subtype="octet-stream", filename=csvfile.name)
+				msg.add_attachment(csvfile.read(), maintype='application', subtype="octet-stream", filename='last_tweets.csv')
 
 			# send
 			with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
@@ -221,4 +257,6 @@ class AllSeeBot(discord.Client):
 		except Exception as e:
 			print(e)
 			print("Error! Couldn't send log report...- {0}".format(datetime.now()))
+			self.logger.error(e)
+			self.logger.error("Error! Couldn't send log report...- {0}".format(datetime.now()))
 
