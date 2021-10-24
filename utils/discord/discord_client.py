@@ -94,7 +94,8 @@ class MyClient(discord.Client):
 						# print(tweets[0].text)
 						self.user_track_dictionary[user] = tweet[0].id
 						# https://twitter.com/twitter/statuses/
-						await self.user_track_channel.send("https://twitter.com/twitter/statuses/{0}".format(self.user_track_dictionary[user]))
+						if self.user_track_channel:
+							await self.user_track_channel.send("https://twitter.com/twitter/statuses/{0}".format(self.user_track_dictionary[user]))
 					except:
-						print("Couldn find user!")
+						print("Couldn find user {0}!".format(user))
 			pass
