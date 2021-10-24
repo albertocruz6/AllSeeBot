@@ -1,6 +1,7 @@
 import discord
 from discord.ext import tasks
 import tweepy
+import csv
 
 from datetime import datetime
 from utils.twitter.twitter_api import *
@@ -85,14 +86,56 @@ class MyClient(discord.Client):
 
 	@tasks.loop(seconds=120.0)
 	async def update_track_fetch(self):
+		#############################################
+		fileName = "last_tweets.csv"
+		def findLastTweet(uid):
+			with open(fileName) as csvFile:
+				csvreader = csv.reader(csvFile)
+				header = []
+				header = next(csvreader)
+				rows = []
+				for row in csvreader:
+					rows.append(row)
+			for row in rows:
+				if str(row[0]) == str(uid):
+					return row[1]
+			return None
+		#############################################
+		#############################################
+		def writeLastTweet(uid, tw_id):
+			with open(fileName) as csvFile:
+				csvreader = csv.reader(csvFile)
+				header = []
+				header = next(csvreader)
+				rows = []
+				for row in csvreader:
+					rows.append(row)
+			
+			for index in range(len(rows)):
+				if str(rows[index][0]) == str(uid):
+					rows[index][1] = tw_id
+					break
+				if index == len(rows) - 1: # didn't find it in csv
+					rows.append([uid, tw_id])
+
+			with open(fileName, 'w') as ncsvFile:
+				for head in header:
+					ncsvFile.write(str(header)+', ')
+				ncsvFile.write('\n')
+				for row in rows:
+					for x in row:
+						ncsvFile.write(str(x)+', ')
+					ncsvFile.write('\n')
+		#############################################
 		if self.user_track_dictionary:
 			for user in self.user_track_dictionary:
-				if self.user_track_dictionary[user] is None:
+				lastWrittenTweet = findLastTweet(user)
+				if self.user_track_dictionary[user] is None and lastWrittenTweet is None:
 					try:
 						user_r = self.tw_handler.get_user(user_id=user)
-
 						tweets = self.tw_handler.user_timeline(screen_name=user_r.screen_name,count = 1)
 						self.user_tracktwitter_dictionary[user] = tweets[0].id
+
 						if self.user_track_channel:
 							await self.user_track_channel.send("https://twitter.com/twitter/statuses/{0}".format(self.user_track_dictionary[user]))
 					except:
@@ -105,6 +148,7 @@ class MyClient(discord.Client):
 							self.user_track_dictionary[user] = tweets[0].id
 							if self.user_track_channel:
 								await self.user_track_channel.send("https://twitter.com/twitter/statuses/{0}".format(self.user_track_dictionary[user]))
+						writeLastTweet(user, self.user_track_dictionary[user])
 					except:
 						print("Couldn find user {0}!".format(user))
 			pass
