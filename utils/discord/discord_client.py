@@ -26,7 +26,7 @@ class MyClient(discord.Client):
 		self.lst_commands = ["greet", "commands", "searchTW"]
 		self.user_search_stack = []
 		self.user_search_stack_channels = []
-		self.user_track_dictionary= {"901864726015209472" : None, "2196628051": None}
+		self.user_track_dictionary= {901864726015209472 : None, 2196628051: None}
 		for channel in self.get_all_channels():
 			if channel.name == "updatedtwitterfeed":
 				self.user_track_channel = channel
