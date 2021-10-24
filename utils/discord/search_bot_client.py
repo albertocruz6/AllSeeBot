@@ -167,7 +167,7 @@ class SearchBot(discord.Client):
 				rows.append(row)
 		for row in rows:
 			if str(row[0]) == str(uid):
-				self.logger.info("Found user {0} in csv!".fomat(uid))
+				self.logger.info("Found user {0} in csv!".format(uid))
 				return row[1]
 		return None
 	#############################################
