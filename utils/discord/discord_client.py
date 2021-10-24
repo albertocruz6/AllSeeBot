@@ -1,5 +1,6 @@
 import discord
 from discord.ext import tasks
+import tweepy
 
 from datetime import datetime
 from utils.twitter.twitter_api import *
@@ -57,11 +58,11 @@ class MyClient(discord.Client):
 			user = users.pop()
 			print("Searching for {0} in twitter...".format(user))
 			try:
-				user = self.tw_handler.get_user(user)
+				user = self.tw_handler.get_user(screen_name=user)
 				# fetching the url
 				url = user.url
 				await channel.send(url)
-			except tweepy.error.TweepError:
+			except:
 				await channel.send("{0} not found!".format(user))
 			if users: # if users remain in this queue return current channel
 				self.user_search_stack.append(users)
