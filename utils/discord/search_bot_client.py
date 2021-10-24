@@ -3,6 +3,8 @@ from discord.ext import tasks
 import tweepy
 import csv
 import logging
+import smtplib
+import os
 
 import settings
 from datetime import datetime
@@ -34,13 +36,14 @@ class SearchBot(discord.Client):
 		# csv
 		self.fileName = "utils/discord/last_tweets.csv"
 
+		# channel to track twitter feed
 		self.user_track_channel = None
 		for channel in self.get_all_channels():
 			if channel.name == "updatedtwitterfeed":
 				self.user_track_channel = channel
 				break
 
-
+		# log status
 		if self.tw_handler is None:
 			self.logger.warning("Invalid tw bot account found! Fetching will not initiate")
 		else:
@@ -48,6 +51,9 @@ class SearchBot(discord.Client):
 			print("Logged into SearchBot TW account at time " + now.strftime("%d/%m/%Y %H:%M:%S"))
 			self.search_tw_loop.start()
 			self.update_tracked_tw.start()
+
+		self.send_log_reports.start() # every 6 hours send log report 
+
 
 	async def on_message(self,message):
 		if message.author == self.user:
@@ -150,6 +156,7 @@ class SearchBot(discord.Client):
 
 	# Helper methods
 	#############################################
+	#############################################
 	def findLastTweet(self, uid):
 		with open(self.fileName) as csvFile:
 			csvreader = csv.reader(csvFile, delimiter=',')
@@ -160,7 +167,7 @@ class SearchBot(discord.Client):
 				rows.append(row)
 		for row in rows:
 			if str(row[0]) == str(uid):
-				print("Found user in csv!")
+				self.logger.info("Found user {0} in csv!".fomat(uid))
 				return row[1]
 		return None
 	#############################################
@@ -179,12 +186,29 @@ class SearchBot(discord.Client):
 				rows[index][1] = tw_id
 				break
 			if index == len(rows) - 1: # didn't find it in csv
-				print("Didn't find the uid in csv...")
+				self.logger.info("Didn't find the uid {0} in csv...".format(uid))
 				rows.append([uid, tw_id])		
-		print(rows)
 		with open(self.fileName, 'w') as ncsvFile:
 			tweet_writer = csv.writer(ncsvFile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
 			tweet_writer.writerow(header)
 			for row in rows:
 				tweet_writer.writerow(row)
 	#############################################
+	#############################################
+	@tasks.loop(hours=6.0)
+	async def send_log_reports(self):
+		try:
+			with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
+				smtp.ehlo()
+				smtp.starttls()
+				smtp.ehlo()
+				smtp.login(os.getenv('BOT_MAIL'), os.getenv('BOT_MAIL_PASS'))
+
+				subject = "Log report for AllSeeBot bot - {0}".format(datetime.now())
+				body = "Test"
+
+				msg = 'Subject: {0}\n\n{1}'.format(subject, body)
+				smtp.sendemail(os.getenv('BOT_MAIL'), "alberto.cruz6@upr.edu", msg)
+		except Exception as e:
+			print("Error! Couldn't send log report...- {0}".format(datetime.now()))
+

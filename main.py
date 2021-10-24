@@ -8,7 +8,9 @@ from utils.discord.search_bot_client import SearchBot
 def main():
 	logger = logging.getLogger(__name__)
 	logger.setLevel(logging.INFO)
+	formatter = logging.Formatter('%(levelname)s:%(name)s:%(message)s')
 	log_file_handler = logging.FileHandler('allSeeBot.log')
+	log_file_handler.setFormatter(formatter)
 	logger.addHandler(log_file_handler)
 	try:
 		settings.init_setup()
