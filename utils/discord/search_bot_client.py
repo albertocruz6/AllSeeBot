@@ -26,7 +26,7 @@ class SearchBot(discord.Client):
 		# Twitter Authentication
 		self.tw_handler = settings.tw_api
 		# Initial Variables
-		self.lst_commands = ["greet", "commands", "searchTW"]
+		self.lst_commands = ["greet", "commands", "searchTW", "addUSR", "help"]
 		self.user_search_stack = []
 		self.user_search_stack_channels = []
 		self.user_track_dictionary= {901864726015209472 : None, 2196628051: None}
@@ -68,6 +68,18 @@ class SearchBot(discord.Client):
 						users.append(msg_arr[i])
 					self.user_search_stack.append(users)
 					await message.channel.send("Queued user searches {0}".format(self.user_search_stack))
+			elif msg.startswith("${0}".format(self.lst_commands[3])):
+				msg_arr = msg.split("\\\\")
+				if len(msg_arr) < 2:
+					await message.channel.send("Please insert twitter id(s) to be queued!")
+				else:
+					for i in range(1,len(msg_arr)):
+						if type(msg_arr[i]) == int:
+							self.user_track_dictionary[msg_arr[i]] = None
+							print("Added user {0} to tracking tl".format(msg_arr[i]))
+						else:
+							print("Didnt add user {0} to tracking tl".format(msg_arr[i]))
+
 	
 	# Loop to fetch tweets of users lists
 	@tasks.loop(seconds=30.0)
@@ -165,6 +177,8 @@ class SearchBot(discord.Client):
 							self.user_track_dictionary[user] = tweets[0].id
 							if self.user_track_channel:
 								await self.user_track_channel.send("https://twitter.com/twitter/statuses/{0}".format(self.user_track_dictionary[user]))
+						else:
+							print('User {0} already updated in tl...'.format(user_r.screen_name))
 					except Exception as e: 
 						print(e)
 						print("Couldn find user {0}!".format(user))
