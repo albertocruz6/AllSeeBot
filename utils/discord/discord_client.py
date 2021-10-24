@@ -61,7 +61,7 @@ class MyClient(discord.Client):
 				user = self.tw_handler.get_user(screen_name=user)
 				# fetching the url
 				url = user.url
-				await channel.send(url)
+				await channel.send("User found! \n{0}".format(url))
 			except:
 				await channel.send("{0} not found!".format(user))
 			if users: # if users remain in this queue return current channel
