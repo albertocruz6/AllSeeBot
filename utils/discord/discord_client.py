@@ -27,7 +27,7 @@ class MyClient(discord.Client):
 		self.user_search_stack = []
 		self.user_search_stack_channels = []
 		self.user_track_dictionary= {"Piteooo" : None, "RullanAgustin" : None}
-		print(for channel in self.get_all_channels())
+		print([for channel in self.get_all_channels()])
 
 	async def on_message(self,message):
 		if message.author == self.user:
