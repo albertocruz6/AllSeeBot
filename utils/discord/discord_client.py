@@ -61,7 +61,7 @@ class MyClient(discord.Client):
 			try:
 				user_r = self.tw_handler.get_user(screen_name=user)
 				# fetching the url
-				url = user_r.url
+				print(user_r)
 				if user_r is not None:
 					await channel.send("User found! \n{0}".format(user_r))
 					# await channel.send("User found! \n{0}".format(url))
