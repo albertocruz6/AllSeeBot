@@ -203,7 +203,7 @@ class SearchBot(discord.Client):
 			msg['Subject'] = "Log report for AllSeeBot bot - {0}".format(datetime.now())
 			msg['From'] = os.getenv('BOT_MAIL')
 			msg['To'] = "alberto.cruz6@upr.edu"
-			msg.set_content('')
+			msg.set_content('Body content')
 			logs = ['searchbot.log', 'allSeeBot.log']
 			
 			# Attachments
@@ -212,7 +212,7 @@ class SearchBot(discord.Client):
 					file_data = f1.read()
 					file_name = f1.name
 				msg.add_attachment(file_data, maintype='text', subtype='plain', filename=file_name)
-			with open(self.fileName, 'r') as csvfile:
+			with open(self.fileName, 'rb') as csvfile:
 				msg.add_attachment(csvfile.read(), maintype='application', subtype="octet-stream", filename=csvfile.name)
 
 			# send
