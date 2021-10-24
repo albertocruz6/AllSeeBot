@@ -208,7 +208,7 @@ class SearchBot(discord.Client):
 			
 			# Attachments
 			for log_file in logs:
-				with open(log_file, 'r') as f1:
+				with open(log_file, 'rb') as f1:
 					file_data = f1.read()
 					file_name = f1.name
 				msg.add_attachment(file_data, maintype='text', subtype='plain', filename=file_name)
