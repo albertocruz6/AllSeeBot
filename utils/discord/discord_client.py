@@ -27,7 +27,7 @@ class MyClient(discord.Client):
 		self.user_search_stack = []
 		self.user_search_stack_channels = []
 		self.user_track_dictionary= {"Piteooo" : None, "RullanAgustin" : None}
-		print(self.get_all_channels())
+		print(for channel in self.get_all_channels())
 
 	async def on_message(self,message):
 		if message.author == self.user:
@@ -84,6 +84,7 @@ class MyClient(discord.Client):
 		if self.user_track_dictionary:
 			for user in self.user_track_dictionary:
 				if self.user_track_dictionary[user] is None:
+					print(user)
 					try:
 						user_r = self.tw_handler.get_user(screen_name=user)
 						tweets = self.tw_handler.user_timeline(screen_name=user_r.screen_name,count = 1)
