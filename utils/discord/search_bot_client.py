@@ -2,28 +2,22 @@ import discord
 from discord.ext import tasks
 import tweepy
 import csv
+import logging
 
 from datetime import datetime
-from utils.twitter.twitter_api import *
+from settings import tw_api
 from utils.external_tools.timer_tool import Timer
 
 # Discord Client class
-class MyClient(discord.Client):
+class SearchBot(discord.Client):
 	async def on_ready(self):
 		now = datetime.now()  
 		print("Bot is initialized!")
 		print('We have logged in as {0.user}'.format(self))
 		
 		# Twitter Authentication
-		self.tw_handler = get_api_handler()
-		if self.tw_handler is None:
-			print("Invalid tw bot account found! Fetching will not initiate")
-		else:
-			self.tw_handler.update_status("AllSeeBot ONLINE! - " + now.strftime("%d/%m/%Y %H:%M:%S"));
-			print("Logged into AllSeeBot TW account at time " + now.strftime("%d/%m/%Y %H:%M:%S"))
-			self.update_fetch.start()
-			self.update_track_fetch.start()
-
+		self.tw_handler = tw_api
+		# Initial Variables
 		self.lst_commands = ["greet", "commands", "searchTW"]
 		self.user_search_stack = []
 		self.user_search_stack_channels = []
@@ -33,6 +27,13 @@ class MyClient(discord.Client):
 				self.user_track_channel = channel
 				break
 
+		if self.tw_handler is None:
+			print("Invalid tw bot account found! Fetching will not initiate")
+		else:
+			self.tw_handler.update_status("SearchBot ONLINE! - " + now.strftime("%d/%m/%Y %H:%M:%S"));
+			print("Logged into SearchBot TW account at time " + now.strftime("%d/%m/%Y %H:%M:%S"))
+			self.search_tw_loop.start()
+			self.update_track_fetch.start()
 
 	async def on_message(self,message):
 		if message.author == self.user:
@@ -58,7 +59,7 @@ class MyClient(discord.Client):
 	
 	# Loop to fetch tweets of users lists
 	@tasks.loop(seconds=30.0)
-	async def update_fetch(self):
+	async def search_tw_loop(self):
 		if self.user_search_stack:
 			channel = self.user_search_stack_channels.pop()
 			users = self.user_search_stack.pop()
@@ -155,4 +156,3 @@ class MyClient(discord.Client):
 								await self.user_track_channel.send("https://twitter.com/twitter/statuses/{0}".format(self.user_track_dictionary[user]))
 					except:
 						print("Couldn find user {0}!".format(user))
-			pass
