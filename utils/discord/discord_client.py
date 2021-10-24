@@ -87,11 +87,10 @@ class MyClient(discord.Client):
 		if self.user_track_dictionary:
 			for user in self.user_track_dictionary:
 				if self.user_track_dictionary[user] is None:
-					print(user)
 					try:
 						user_r = self.tw_handler.get_user(screen_name=user)
 						tweets = self.tw_handler.user_timeline(screen_name=user_r.screen_name,count = 1)
-						print(tweets)
+						print(tweets[0].text)
 						# self.user_track_dictionary[user] = tweet.id
 						# https://twitter.com/twitter/statuses/
 					except:
