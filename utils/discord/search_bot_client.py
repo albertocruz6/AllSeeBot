@@ -16,12 +16,13 @@ class SearchBot(discord.Client):
 		# Logger setup
 		self.logger = logging.getLogger(__name__)
 		self.logger.setLevel(logging.INFO)
+		formatter = logging.Formatter('%(levelname)s:%(name)s:%(message)s')
 		log_file_handler = logging.FileHandler('searchbot.log')
+		log_file_handler.setFormatter(formatter)
 		self.logger.addHandler(log_file_handler)
 
 		self.logger.info("Bot is initialized!")
 		self.logger.info('We have logged in as {0.user}'.format(self))
-		
 		# Twitter Authentication
 		self.tw_handler = settings.tw_api
 		# Initial Variables
@@ -40,7 +41,7 @@ class SearchBot(discord.Client):
 			self.tw_handler.update_status("SearchBot ONLINE! - " + now.strftime("%d/%m/%Y %H:%M:%S"));
 			print("Logged into SearchBot TW account at time " + now.strftime("%d/%m/%Y %H:%M:%S"))
 			self.search_tw_loop.start()
-			self.update_track_fetch.start()
+			self.update_tracked_tw.start()
 
 	async def on_message(self,message):
 		if message.author == self.user:
@@ -74,16 +75,17 @@ class SearchBot(discord.Client):
 				if not users:
 					break
 				user = users.pop()
-				print("Searching for {0} in twitter...".format(user))
+				self.logger.info("Searching for {0} in twitter...".format(user))
 				try:
+					self.logger.info("User found!")
 					user_r = self.tw_handler.get_user(screen_name=user)
 					# fetching the url
 					if user_r.screen_name is not None:
 						url = "https://twitter.com/{0}".format(user_r.screen_name)
-						print(channel)
 						await channel.send("User found! UserId: {1}\n{0}".format(url, user_r.id))
 						# await channel.send("User found! \n{0}".format(url))
 					else:
+						self.logger.info("User not found!")
 						await channel.send("User not found!")
 				except:
 					await channel.send("{0} not found!".format(user))
@@ -93,7 +95,7 @@ class SearchBot(discord.Client):
 				await channel.send("Queued user searches remaining {0}".format(self.user_search_stack))
 
 	@tasks.loop(seconds=60.0)
-	async def update_track_fetch(self):
+	async def update_tracked_tw(self):
 		#############################################
 		fileName = "last_tweets.csv"
 		def findLastTweet(uid):
@@ -140,9 +142,8 @@ class SearchBot(discord.Client):
 		print("TRACKING USERS")
 		if self.user_track_dictionary:
 			for user in self.user_track_dictionary:
-				lastWrittenTweet = findLastTweet(user)
-				print(lastWrittenTweet)
-				if self.user_track_dictionary[user] is None and lastWrittenTweet == "None":
+				# lastWrittenTweet = findLastTweet(user)
+				if self.user_track_dictionary[user] is None:
 					try:
 						user_r = self.tw_handler.get_user(user_id=user)
 						tweets = self.tw_handler.user_timeline(screen_name=user_r.screen_name,count = 1)
