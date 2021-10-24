@@ -51,25 +51,27 @@ class MyClient(discord.Client):
 					await message.channel.send("Queued user searches {0}".format(self.user_search_stack))
 	
 	# Loop to fetch tweets of users lists
-	@tasks.loop(seconds=60.0)
+	@tasks.loop(seconds=30.0)
 	async def update_fetch(self):
 		if self.user_search_stack:
 			channel = self.user_search_stack_channels.pop()
 			users = self.user_search_stack.pop()
-			user = users.pop()
-			print("Searching for {0} in twitter...".format(user))
-			try:
-				user_r = self.tw_handler.get_user(screen_name=user)
-				# fetching the url
-				print(user_r)
-				if user_r.screen_name is not None:
-					url = "https://twitter.com/{0}".format(user_r.screen_name)
-					await channel.send("User found! \n{0}".format(url))
-					# await channel.send("User found! \n{0}".format(url))
-				else:
-					await channel.send("User not found!")
-			except:
-				await channel.send("{0} not found!".format(user))
+			for i in range(3):
+				if not users:
+					break
+				user = users.pop()
+				print("Searching for {0} in twitter...".format(user))
+				try:
+					user_r = self.tw_handler.get_user(screen_name=user)
+					# fetching the url
+					if user_r.screen_name is not None:
+						url = "https://twitter.com/{0}".format(user_r.screen_name)
+						await channel.send("User found! \n{0}".format(url))
+						# await channel.send("User found! \n{0}".format(url))
+					else:
+						await channel.send("User not found!")
+				except:
+					await channel.send("{0} not found!".format(user))
 			if users: # if users remain in this queue return current channel
 				self.user_search_stack.append(users)
 				self.user_search_stack_channels.append(channel)
