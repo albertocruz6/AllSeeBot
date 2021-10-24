@@ -212,7 +212,7 @@ class SearchBot(discord.Client):
 					file_data = f.read()
 					file_name = f.name
 				msg.add_attachment(file_data, maintype='text', subtype='plain', filename=file_name)
-			with open(self.fileName 'r') as csvfile:
+			with open(self.fileName, 'r') as csvfile:
 				msg.attach('lastTweets.csv', csvfile.getvalue(), 'text/csv')
 
 			# send
