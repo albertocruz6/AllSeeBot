@@ -129,10 +129,11 @@ class MyClient(discord.Client):
 						ncsvFile.write(str(x)+', ')
 					ncsvFile.write('\n')
 		#############################################
+		print("TRACKING USERS")
 		if self.user_track_dictionary:
 			for user in self.user_track_dictionary:
 				lastWrittenTweet = findLastTweet(user)
-				if self.user_track_dictionary[user] is None and lastWrittenTweet is None:
+				if self.user_track_dictionary[user] is None and lastWrittenTweet == "None":
 					try:
 						user_r = self.tw_handler.get_user(user_id=user)
 						tweets = self.tw_handler.user_timeline(screen_name=user_r.screen_name,count = 1)
