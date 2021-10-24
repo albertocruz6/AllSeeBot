@@ -74,10 +74,11 @@ class SearchBot(discord.Client):
 					await message.channel.send("Please insert twitter id(s) to be queued!")
 				else:
 					for i in range(1,len(msg_arr)):
-						if type(msg_arr[i]) == int:
-							self.user_track_dictionary[msg_arr[i]] = None
+						try:
+							self.user_track_dictionary[int(msg_arr[i])] = None
 							print("Added user {0} to tracking tl".format(msg_arr[i]))
-						else:
+						except Exception as e:
+							print(e)
 							print("Didnt add user {0} to tracking tl".format(msg_arr[i]))
 
 	
