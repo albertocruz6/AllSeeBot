@@ -21,12 +21,13 @@ class MyClient(discord.Client):
 			self.tw_handler.update_status("AllSeeBot ONLINE! - " + now.strftime("%d/%m/%Y %H:%M:%S"));
 			print("Logged into AllSeeBot TW account at time " + now.strftime("%d/%m/%Y %H:%M:%S"))
 			self.update_fetch.start()
+			self.update_track_fetch.start()
 
 		self.lst_commands = ["greet", "commands", "searchTW"]
 		self.user_search_stack = []
 		self.user_search_stack_channels = []
-
-	
+		self.user_track_dictionary= {"Piteooo" : None, "RullanAgustin" : None}
+		print(self.get_all_channels())
 
 	async def on_message(self,message):
 		if message.author == self.user:
@@ -66,7 +67,8 @@ class MyClient(discord.Client):
 					# fetching the url
 					if user_r.screen_name is not None:
 						url = "https://twitter.com/{0}".format(user_r.screen_name)
-						await channel.send("User found! \n{0}".format(url))
+						print(channel)
+						await channel.send("User found! UserId: {1}\n{0}".format(url, user_r.id))
 						# await channel.send("User found! \n{0}".format(url))
 					else:
 						await channel.send("User not found!")
@@ -76,3 +78,18 @@ class MyClient(discord.Client):
 				self.user_search_stack.append(users)
 				self.user_search_stack_channels.append(channel)
 				channel.send("Queued user searches remaining {0}".format(self.user_search_stack))
+
+	@tasks.loop(seconds=120.0)
+	async def update_track_fetch(self):
+		if self.user_track_dictionary:
+			for user, lastTweet in self.user_track_dictionary:
+				if lastTweet is None:
+					try:
+						user_r = self.tw_handler.get_user(screen_name=user)
+						tweets = self.tw_handler.user_timeline(screen_name=user_r.screen_name,count = 1)
+						print(tweet.text)
+						self.user_track_dictionary[user] = tweet.id
+						# https://twitter.com/twitter/statuses/
+					except:
+						print("Couldn find user!")
+			pass
