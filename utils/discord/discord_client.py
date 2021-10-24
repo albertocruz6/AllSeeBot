@@ -39,6 +39,7 @@ class MyClient(discord.Client):
 			elif msg.startswith("${0}".format(self.lst_commands[1])):
 				await message.channel.send("{0}!".format(self.lst_commands))
 			elif msg.startswith("${0}".format(self.lst_commands[2])):
+				msg_arr = msg.split("~")
 				if len(msg_arr) < 2:
 					await message.channel.send("Please insert twitter username(s) to be queued!")
 				else:
@@ -61,7 +62,7 @@ class MyClient(discord.Client):
 				user_r = self.tw_handler.get_user(screen_name=user)
 				# fetching the url
 				url = user_r.url
-				if url not None:
+				if url is not None:
 					await channel.send("User found! \n{0}".format(user_r))
 					# await channel.send("User found! \n{0}".format(url))
 				else:
