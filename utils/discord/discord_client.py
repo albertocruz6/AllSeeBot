@@ -75,5 +75,4 @@ class MyClient(discord.Client):
 			if users: # if users remain in this queue return current channel
 				self.user_search_stack.append(users)
 				self.user_search_stack_channels.append(channel)
-			
-		print("Testing async task!")
+				channel.send("Queued user searches remaining {0}".format(self.user_search_stack))
