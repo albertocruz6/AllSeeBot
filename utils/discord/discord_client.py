@@ -28,7 +28,9 @@ class MyClient(discord.Client):
 		self.user_search_stack_channels = []
 		self.user_track_dictionary= {"Piteooo" : None, "RullanAgustin" : None}
 		for channel in self.get_all_channels():
-			print(channel)
+			if channel.name == "updatedtwitterfeed":
+				self.user_track_channel = channel
+
 
 	async def on_message(self,message):
 		if message.author == self.user:
@@ -89,8 +91,8 @@ class MyClient(discord.Client):
 					try:
 						user_r = self.tw_handler.get_user(screen_name=user)
 						tweets = self.tw_handler.user_timeline(screen_name=user_r.screen_name,count = 1)
-						print(tweet.text)
-						self.user_track_dictionary[user] = tweet.id
+						print(tweets)
+						# self.user_track_dictionary[user] = tweet.id
 						# https://twitter.com/twitter/statuses/
 					except:
 						print("Couldn find user!")
