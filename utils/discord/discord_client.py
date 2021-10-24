@@ -96,6 +96,8 @@ class MyClient(discord.Client):
 				rows = []
 				for row in csvreader:
 					rows.append(row)
+			print(header)
+			print(rows)
 			for row in rows:
 				if str(row[0]) == str(uid):
 					return row[1]
@@ -120,7 +122,7 @@ class MyClient(discord.Client):
 
 			with open(fileName, 'w') as ncsvFile:
 				for head in header:
-					ncsvFile.write(str(header)+', ')
+					ncsvFile.write(str(head)+', ')
 				ncsvFile.write('\n')
 				for row in rows:
 					for x in row:
@@ -135,7 +137,7 @@ class MyClient(discord.Client):
 						user_r = self.tw_handler.get_user(user_id=user)
 						tweets = self.tw_handler.user_timeline(screen_name=user_r.screen_name,count = 1)
 						self.user_tracktwitter_dictionary[user] = tweets[0].id
-
+						writeLastTweet(user, self.user_track_dictionary[user])
 						if self.user_track_channel:
 							await self.user_track_channel.send("https://twitter.com/twitter/statuses/{0}".format(self.user_track_dictionary[user]))
 					except:
@@ -145,10 +147,10 @@ class MyClient(discord.Client):
 						user_r = self.tw_handler.get_user(user_id=user)
 						tweets = self.tw_handler.user_timeline(screen_name=user_r.screen_name,count = 1)
 						if self.user_track_dictionary[user] != tweets[0].id:
+							writeLastTweet(user, self.user_track_dictionary[user])
 							self.user_track_dictionary[user] = tweets[0].id
 							if self.user_track_channel:
 								await self.user_track_channel.send("https://twitter.com/twitter/statuses/{0}".format(self.user_track_dictionary[user]))
-						writeLastTweet(user, self.user_track_dictionary[user])
 					except:
 						print("Couldn find user {0}!".format(user))
 			pass
