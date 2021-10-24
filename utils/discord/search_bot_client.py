@@ -181,6 +181,7 @@ class SearchBot(discord.Client):
 			if index == len(rows) - 1: # didn't find it in csv
 				print("Didn't find the uid in csv...")
 				rows.append([uid, tw_id])		
+		print(rows)
 		with open(self.fileName, 'w') as ncsvFile:
 			tweet_writer = csv.writer(ncsvFile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
 			tweet_writer.writerow(header)
