@@ -30,6 +30,7 @@ class MyClient(discord.Client):
 		for channel in self.get_all_channels():
 			if channel.name == "updatedtwitterfeed":
 				self.user_track_channel = channel
+				break
 
 
 	async def on_message(self,message):
@@ -80,7 +81,7 @@ class MyClient(discord.Client):
 			if users: # if users remain in this queue return current channel
 				self.user_search_stack.append(users)
 				self.user_search_stack_channels.append(channel)
-				channel.send("Queued user searches remaining {0}".format(self.user_search_stack))
+				await channel.send("Queued user searches remaining {0}".format(self.user_search_stack))
 
 	@tasks.loop(seconds=120.0)
 	async def update_track_fetch(self):
@@ -90,9 +91,10 @@ class MyClient(discord.Client):
 					try:
 						user_r = self.tw_handler.get_user(screen_name=user)
 						tweets = self.tw_handler.user_timeline(screen_name=user_r.screen_name,count = 1)
-						print(tweets[0].text)
-						# self.user_track_dictionary[user] = tweet.id
+						# print(tweets[0].text)
+						self.user_track_dictionary[user] = tweet[0].id
 						# https://twitter.com/twitter/statuses/
+						await self.user_track_channel.send("https://twitter.com/twitter/statuses/{0}".format(self.user_track_dictionary[user]))
 					except:
 						print("Couldn find user!")
 			pass
