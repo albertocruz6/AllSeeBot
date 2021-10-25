@@ -27,6 +27,8 @@ class AllSeeBot(discord.Client):
 		self.logger.info('We have logged in as {0.user}'.format(self))
 		# Twitter Authentication
 		self.tw_handler = settings.tw_api
+		# DB connection
+		self.db_conn = settings.db_conn
 		# Initial Variables
 		self.lst_commands = ["greet", "commands", "searchTW", "addUSR", "help"]
 		self.user_search_stack = []
@@ -81,6 +83,9 @@ class AllSeeBot(discord.Client):
 			self.logger.info("Logged into AllSeeBot TW account at time " + now.strftime("%d/%m/%Y %H:%M:%S"))
 			self.search_tw_loop.start()
 			self.update_tracked_tw.start()
+		if self.db_conn is None:
+			self.logger.error("Database connection couldn't be established... Functionality will be severely limited...")
+
 
 		# commented to not send email while working on feature branch
 		self.send_log_reports.start() # every 6 hours send log report 
@@ -259,6 +264,8 @@ class AllSeeBot(discord.Client):
 			with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
 				smtp.login(os.getenv('BOT_MAIL'), os.getenv('BOT_MAIL_PASS'))
 				smtp.send_message(msg)
+			self.logger.info("Sent logs to {0}".format(" ,".join(targets)))
+
 		except Exception as e:
 			print(e)
 			print("Error! Couldn't send log report...- {0}".format(datetime.now()))
