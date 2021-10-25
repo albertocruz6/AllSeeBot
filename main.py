@@ -17,7 +17,7 @@ def main():
 	logger.addHandler(log_file_handler)
 	# Booting sequence
 	try:
-		settings.init_setup()
+		settings.init_setup(logger)
 		client = AllSeeBot()
 		logger.warning('Started BOTS')
 		client.run(os.getenv('BOT_TOKEN'))
