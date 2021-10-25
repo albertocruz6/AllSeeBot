@@ -13,6 +13,23 @@ from utils.external_tools.timer_tool import Timer
 
 # Discord Client class
 class AllSeeBot(discord.Client):
+	'''
+	Currently this onready method functions as the __init__ of the bot.
+
+	The code that exists is built around the
+	fact that the bot is only in one server, which is BAD. 
+
+	Code refactoring must be done so that it will create all the 
+	necessary channels for it to work and if it is unable to do so
+	identify which servers (guilds) it should evade interacting
+	with. 
+
+	This could be built to be the base model for servers that wish to 
+	have a twitter bot account embedded with their 
+	interactions. 
+
+	Sorry for long description of issue... - Bert
+	'''
 	async def on_ready(self):
 		now = datetime.now()  
 		# Logger setup
@@ -72,7 +89,10 @@ class AllSeeBot(discord.Client):
 				if not check_channel and check_category:
 					tchannel = await server.create_text_channel(self.user_track_target_channel, category=tcategory)
 					self.user_track_channel = tchannel
-				
+		
+		# Channel to send tw messages	
+		self.admin_tw_target_channel = "sendadminmessages"
+		self.admin_tw_channel = None
 
 
 		# log status
