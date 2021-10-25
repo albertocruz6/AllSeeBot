@@ -4,6 +4,7 @@ from datetime import datetime
 
 import settings
 from utils.discord.search_bot_client import AllSeeBot
+from utils.external_tools.helper_functions import send_log_reports
 
 
 def main():
@@ -24,6 +25,7 @@ def main():
 		if settings.tw_api is not None:
 			settings.tw_api.update_status("AllSeeBot Offline! :') - {0}".format(datetime.now().strftime("%d/%m/%Y %H:%M:%S")))
 		logger.warning('Bot will be turned off...')
+		send_log_reports(logger)
 
 if __name__ == "__main__":
 	main()
