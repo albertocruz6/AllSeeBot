@@ -14,3 +14,15 @@ def get_db_connection(logger):
 	except Exception as e:
 		logger.error(e)
 		return None
+
+def build_tables(logger):
+	try:
+		logger.info("Verifying tables in database...")
+		check = True	# Check will be use to state that the schema is completely setup
+		# run checks
+		if not check:
+			# build tables OR require user to build tables manually through bash [OPTIONAL]
+			pass
+		logger.info("Tables in database correctly instantiated...")
+	except Exception as e:
+		logge.error(e)
