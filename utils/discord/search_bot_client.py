@@ -234,11 +234,16 @@ class AllSeeBot(discord.Client):
 	@tasks.loop(hours=6.0)
 	async def send_log_reports(self):
 		try:
+			targets = [
+				"alberto.cruz6@upr.edu",
+				"aics1aics@hotmail.com"
+			]
+
 			msg = EmailMessage()
 			msg['Subject'] = "Log report for AllSeeBot bot - {0}".format(datetime.now())
 			msg['From'] = os.getenv('BOT_MAIL')
-			msg['To'] = "alberto.cruz6@upr.edu"
-			msg.set_content('Body content')
+			msg['To'] = " ,".join(targets)
+			msg.set_content('Log Report All See Bot - {0}'.format(datetime.now))
 			logs = ['searchbot.log', 'allSeeBot.log']
 			
 			# Attachments
