@@ -18,7 +18,7 @@ class AllSeeBot(discord.Client):
 		# Logger setup
 		self.logger = logging.getLogger(__name__)
 		self.logger.setLevel(logging.INFO)
-		formatter = logging.Formatter('%(levelname)s:%(name)s:%(message)s')
+		formatter = logging.Formatter('%(asctime)s:%(levelname)s:%(name)s:%(message)s', "%Y-%m-%d %H:%M:%S")
 		log_file_handler = logging.FileHandler('searchbot.log')
 		log_file_handler.setFormatter(formatter)
 		self.logger.addHandler(log_file_handler)
