@@ -1,4 +1,4 @@
-## ALL SEE BOT
+## [ALL SEE BOT](https://twitter.com/AllSeeBot)
 - Project with the intention to explore the Discord.py API and the Tweepy API working in unison
 - Bot has functions that can be prompted in twitter and in discord \[mutually exclusive\]:
 	- Discord:
