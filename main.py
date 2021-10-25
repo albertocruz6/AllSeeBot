@@ -19,7 +19,7 @@ def main():
 	try:
 		settings.init_setup(logger)
 		client = AllSeeBot()
-		logger.warning('Started BOTS')
+		logger.info('Started All See Bot...')
 		client.run(os.getenv('BOT_TOKEN'))
 	finally:
 		if settings.tw_api is not None:

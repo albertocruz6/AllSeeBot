@@ -264,6 +264,8 @@ class AllSeeBot(discord.Client):
 			with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
 				smtp.login(os.getenv('BOT_MAIL'), os.getenv('BOT_MAIL_PASS'))
 				smtp.send_message(msg)
+			self.logger.info("Sent logs to {0}".format(" ,".join(targets)))
+
 		except Exception as e:
 			print(e)
 			print("Error! Couldn't send log report...- {0}".format(datetime.now()))
