@@ -1,5 +1,6 @@
 import os
 import logging
+import pytz
 from datetime import datetime
 
 import settings
@@ -19,11 +20,14 @@ def main():
 	try:
 		settings.init_setup(logger)
 		client = AllSeeBot()
-		logger.info('Started All See Bot...')
+		logger.warning('Started All See Bot...')
 		client.run(os.getenv('BOT_TOKEN'))
+	except Exception as e:
+		print(e)
+		logger.error(e)
 	finally:
 		if settings.tw_api is not None:
-			settings.tw_api.update_status("AllSeeBot Offline! :') - {0}".format(datetime.now().strftime("%d/%m/%Y %H:%M:%S")))
+			settings.tw_api.update_status("AllSeeBot Offline! :') - {0}".format(datetime.now(pytz.timezone("America/Puerto_Rico")).strftime("%d/%m/%Y %H:%M:%S")))
 		logger.warning('Bot will be turned off...')
 		send_log_reports(logger)
 

@@ -5,10 +5,11 @@ import csv
 import logging
 import smtplib
 import os
+import pytz
+from datetime import datetime
 from email.message import EmailMessage
 
 import settings
-from datetime import datetime
 from utils.external_tools.timer_tool import Timer
 
 # Discord Client class
@@ -31,7 +32,7 @@ class AllSeeBot(discord.Client):
 	Sorry for long description of issue... - Bert
 	'''
 	async def on_ready(self):
-		now = datetime.now()  
+		now = datetime.now(pytz.timezone("America/Puerto_Rico")).strftime("%d/%m/%Y %H:%M:%S")
 		# Logger setup
 		self.logger = logging.getLogger(__name__)
 		self.logger.setLevel(logging.INFO)
@@ -99,8 +100,8 @@ class AllSeeBot(discord.Client):
 		if self.tw_handler is None:
 			self.logger.warning("Invalid tw bot account found! Fetching will not initiate")
 		else:
-			self.tw_handler.update_status("AllSeeBot ONLINE! - " + now.strftime("%d/%m/%Y %H:%M:%S"));
-			self.logger.info("Logged into AllSeeBot TW account at time " + now.strftime("%d/%m/%Y %H:%M:%S"))
+			self.tw_handler.update_status("AllSeeBot ONLINE! - " + datetime.now(pytz.timezone("America/Puerto_Rico")).strftime("%d/%m/%Y %H:%M:%S"));
+			self.logger.info("Logged into AllSeeBot TW account at time " + datetime.now(pytz.timezone("America/Puerto_Rico")).strftime("%d/%m/%Y %H:%M:%S"))
 			self.search_tw_loop.start()
 			self.update_tracked_tw.start()
 		if self.db_conn is None:
@@ -265,10 +266,10 @@ class AllSeeBot(discord.Client):
 			]
 
 			msg = EmailMessage()
-			msg['Subject'] = "Log report for AllSeeBot bot - {0}".format(datetime.now())
+			msg['Subject'] = "Log report for AllSeeBot bot - {0}".format(datetime.now(pytz.timezone("America/Puerto_Rico")).strftime("%d/%m/%Y %H:%M:%S"))
 			msg['From'] = os.getenv('BOT_MAIL')
 			msg['To'] = " ,".join(targets)
-			msg.set_content('Log Report All See Bot - {0}'.format(datetime.now))
+			msg.set_content('Log Report All See Bot - {0}'.format(datetime.now(pytz.timezone("America/Puerto_Rico")).strftime("%d/%m/%Y %H:%M:%S")))
 			logs = ['searchbot.log', 'allSeeBot.log']
 			
 			# Attachments
@@ -288,7 +289,7 @@ class AllSeeBot(discord.Client):
 
 		except Exception as e:
 			print(e)
-			print("Error! Couldn't send log report...- {0}".format(datetime.now()))
+			print("Error! Couldn't send log report...- {0}".format(datetime.now(pytz.timezone("America/Puerto_Rico")).strftime("%d/%m/%Y %H:%M:%S")))
 			self.logger.error(e)
-			self.logger.error("Error! Couldn't send log report...- {0}".format(datetime.now()))
+			self.logger.error("Error! Couldn't send log report...- {0}".format(datetime.now(pytz.timezone("America/Puerto_Rico")).strftime("%d/%m/%Y %H:%M:%S")))
 

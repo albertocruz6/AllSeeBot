@@ -2,6 +2,7 @@ import csv
 import os
 import smtplib
 from email.message import EmailMessage
+import pytz
 from datetime import datetime
 
 # Helper Functions 
@@ -13,7 +14,7 @@ def send_log_reports(logger):
 			]
 			fileName = "utils/discord/last_tweets.csv"
 			msg = EmailMessage()
-			msg['Subject'] = "Log report for AllSeeBot bot - {0}".format(datetime.now())
+			msg['Subject'] = "Log report for AllSeeBot bot - {0}".format(datetime.now(pytz.timezone("America/Puerto_Rico")).strftime("%d/%m/%Y %H:%M:%S"))
 			msg['From'] = os.getenv('BOT_MAIL')
 			msg['To'] = " ,".join(targets)
 			msg.set_content('Body content')
@@ -32,9 +33,9 @@ def send_log_reports(logger):
 			with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
 				smtp.login(os.getenv('BOT_MAIL'), os.getenv('BOT_MAIL_PASS'))
 				smtp.send_message(msg)
-			logger.info("Sent logs to {0}".format(" ,".join(targets)))
+			logger.warning("Sent logs to {0}".format(" ,".join(targets)))
 		except Exception as e:
 			print(e)
-			print("Error! Couldn't send log report...- {0}".format(datetime.now()))
+			print("Error! Couldn't send log report...- {0}".format(datetime.now(pytz.timezone("America/Puerto_Rico")).strftime("%d/%m/%Y %H:%M:%S")))
 			logger.error(e)
-			logger.error("Error! Couldn't send log report...- {0}".format(datetime.now()))
+			logger.error("Error! Couldn't send log report...- {0}".format(datetime.now(pytz.timezone("America/Puerto_Rico")).strftime("%d/%m/%Y %H:%M:%S")))
